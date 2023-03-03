@@ -1,6 +1,7 @@
-{{ header }}
-<main>
-	<h1>this is content</h1>
-</main>
-{{ sidebar }}
-{{ outlet }}
+<div class="container">
+	{{ header }}
+	<div class="row">
+		<div class="col-md-3">{{ sidebar }}</div>
+		<div class="col-md-9">{{ outlet }}</div>
+	</div>
+</div>

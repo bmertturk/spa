@@ -1,0 +1,8 @@
+$include-column-box-sizing: true;
+$enable-grid: false;
+$enable-responsive-typography: true;
+$enable-class-container: false;
+$enable-viewport: false;
+
+@import "../../node_modules/@picocss/pico/scss/pico";
+@import "../../node_modules/bootstrap/scss/bootstrap-grid";
