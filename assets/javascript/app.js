@@ -2,7 +2,8 @@ import { routes } from "./routes.js";
 
 const app = {
 
-	firstData: null,
+	fullData: "",
+	firstTarget: "",
 
 	init() {
 		this.findRoute();
@@ -19,42 +20,62 @@ const app = {
 			if(target === null) {
 				target = "app";
 			}
-			if(this.firstData === null) this.firstData = target;
+			if(this.firstTarget === "") this.firstTarget = target;
 			this.parseResult(data, target);
 		});
 	},
 	
 	parseResult(data, target) {
-		const dataResult = this.parseData(data);
-		const templateData = dataResult?.querySelectorAll("div[data-template]");
-		this.addData(dataResult, target);
+		const templateData = this.matchMustache(data);
+		this.addData(data, target);
 		if(templateData?.length > 0) {
 			for(let i = 0; i < templateData.length;i++) {
-				const dataTemplate = templateData[i].getAttribute("data-template");
+				const dataTemplate = this.stripData(templateData[i]);
 				if(dataTemplate !== null) {
 					target = `${dataTemplate}`;
-					this.addScript(`modules/snippets/${dataTemplate}.html`, target);
+					if(dataTemplate !== "outlet") {
+						this.addScript(`modules/snippets/${dataTemplate}.html`, target);
+					} else {
+						const location = window.location.pathname;
+						const pickedPage = routes.find(route => route.route === location);
+						this.addScript(`modules/templates/${pickedPage.page}.html`, target);
+					}
 				}
 			}
 		} else {
-			this.stripData(this.firstData);
+			this.appendData(this.firstTarget);
 		}
 	},
 
-	stripData(firstData) {
-		const allHTML = document.querySelector(`[data-template="${firstData}"]`);
-		
-		console.log(allHTML);
+	matchMustache(data) {
+		return data.match(/\{\{*.*\}\}/gm);
+	},
+
+	stripData(data) {
+		return data.replace("{{", "").replace('}}', "").trim();
+	},
+
+	replaceData(data, target) {
+		const mustache = new RegExp(`{{\\s?${target}\\s?}}`);
+		this.fullData = this.fullData.replace(mustache, data);
 	},
 
 	parseData(data) {
 		const parser = new DOMParser();
-		let dom = parser.parseFromString(data, "text/html").getRootNode().querySelector('*[template]');
+		let dom = parser.parseFromString(data, "text/html").getRootNode();
 		return dom;
-	},	
+	},
 
 	addData(data, target) {
-		document.querySelector(`[data-template="${target}"]`).appendChild(data);
+		if(target === "app") {
+			this.fullData = data;
+		} else {
+			this.replaceData(data, target);
+		}
+	},
+
+	appendData(target) {
+		document.querySelector(`#${target}`).innerHTML = this.fullData;
 	}
 }
 
