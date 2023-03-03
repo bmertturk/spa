@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "sass assets/scss/style.scss:dist/style.css -w --style=compressed",
+    "build": "sass assets/scss/style.scss:dist/style.css --style=compressed"
   },
   "author": "",
   "license": "ISC",
