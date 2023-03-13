@@ -8,5 +8,5 @@ export const routes = [
 		layout: "nocontent",
 		page: "login",
 		route: "/login"
-	}
+	},
 ]
