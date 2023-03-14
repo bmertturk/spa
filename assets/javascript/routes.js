@@ -9,4 +9,9 @@ export const routes = [
 		page: "login",
 		route: "/login"
 	},
+	{
+		layout: "content",
+		page: "products",
+		route: "/products"
+	},
 ]
