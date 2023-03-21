@@ -1,7 +1,7 @@
-const sidebar = {
+app.sidebar = {
 	init() {
-		console.log('sidebar.js');
+		console.log('sidebar.js çalıştı');
 	}
 };
 
-sidebar.init();
+app.sidebar.init();

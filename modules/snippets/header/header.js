@@ -1,1 +1,1 @@
-const header = {};
+app.header = {};
