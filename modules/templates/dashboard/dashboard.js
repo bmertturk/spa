@@ -1,7 +1,7 @@
-const dashboard = {
+app.dashboard = {
 	init() {
 		console.log('dsadsadsa');
 	}
 };
 
-dashboard.init();
+app.dashboard.init();

@@ -1,1 +1,1 @@
-const products = {};
+app.products = {};

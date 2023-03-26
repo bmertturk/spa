@@ -5,6 +5,7 @@ const app = {
 	fullData: "",
 	firstTarget: "",
 	allComponents: [],
+	lastTarget: "",
 
 	init() {
 		this.findRoute();
@@ -18,20 +19,23 @@ const app = {
 	},
 
 	async addScript(url, target = null) {
+		if (target === null) {
+			target = "app";
+		}
+		if (this.firstTarget === "") this.firstTarget = target;
+		// Bittiği yeri bulamıyorum.
+		document.querySelector(`#${this.firstTarget}`).classList.add('loading');
 		await fetch(url).then(resp => resp.text()).then(data => {
-			if (target === null) {
-				target = "app";
-			}
-			if (this.firstTarget === "") this.firstTarget = target;
 			this.parseResult(data, target);
 		});
 	},
 
-	parseResult(data, target) {
+	async parseResult(data, target) {
 		const templateData = this.matchMustache(data);
 		this.addData(data, target);
 		if (templateData?.length > 0) {
-			for (let i = 0; i < templateData.length; i++) {
+			for(let i in templateData) {
+				console.log('loop');
 				const dataTemplate = this.stripData(templateData[i]);
 				if (dataTemplate !== null) {
 					target = `${dataTemplate}`;
@@ -56,6 +60,11 @@ const app = {
 						this.callJs(pickedPath);
 					}
 				}
+				if(Number(i)+1 === templateData.length) {
+					// Bittiği yer burası gibi gözükse de burası değil
+					console.log('son');
+					document.querySelector(`#${this.firstTarget}`).classList.remove('loading');
+				}
 			}
 		} else {
 			this.appendData(this.firstTarget);
@@ -66,9 +75,14 @@ const app = {
 		const componentIndex = this.allComponents.findIndex(component => component.path === pickedPath);
 		let scriptTag = this.allComponents[componentIndex].scriptElement;
 		if(scriptTag !== null) return;
+		let scriptWrapper = document.createElement('div');
+		scriptWrapper.id = "script-wrapper";
 		scriptTag = document.createElement('script');
 		scriptTag.src = `${pickedPath}.js`;
-		document.body.appendChild(scriptTag);
+		if(!document.querySelector('#script-wrapper')) {
+			document.body.appendChild(scriptWrapper);
+		}
+		document.querySelector('#script-wrapper').appendChild(scriptTag);
 	},
 
 	matchMustache(data) {
@@ -100,6 +114,7 @@ const app = {
 
 	appendData(target) {
 		document.querySelector(`#${target}`).innerHTML = this.fullData;
+
 	},
 
 	handleLink(e) {
